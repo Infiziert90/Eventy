@@ -118,7 +118,8 @@ public class Plugin : IDalamudPlugin
                     Begin = ev.Begin,
                     End = ev.End,
                     Special = ev.Special,
-                    Color = color,
+                    Color = color.Normal,
+                    Opacity = color.Opacity,
                     Spacing = 20.0f // initial spacing
                 };
 
@@ -127,16 +128,25 @@ public class Plugin : IDalamudPlugin
                     eventDay.IsFirst = idx == 0;
                     if (!dict.TryAdd(day.Ticks, [eventDay]))
                     {
-                        var entry = dict[day.Ticks];
+                        var entries = dict[day.Ticks];
 
                         // We have a max of 50.0f spacing, so we wrap back around if we go above it
                         if (eventDay.IsFirst)
                         {
-                            eventDay.Spacing = entry.Last().Spacing + 10.0f;
-                            if (eventDay.Spacing > 50.0f)
-                                eventDay.Spacing = 20.0f;
+                            // Check if space above is free else set spacing to +10.0f of current
+                            foreach (var (entry, iidx) in entries.WithIndex())
+                            {
+                                var spacing = 20.0f + (10.0f * iidx);
+                                if (entry.Spacing > spacing)
+                                {
+                                    eventDay.Spacing = spacing;
+                                    break;
+                                }
+
+                                eventDay.Spacing = entry.Spacing + 10.0f;
+                            }
                         }
-                        dict[day.Ticks] = entry.Append(eventDay).ToArray();
+                        dict[day.Ticks] = entries.Append(eventDay).ToArray();
                     }
                 }
             }
@@ -182,6 +192,7 @@ public struct ParsedEvent
     public DateTime End = DateTime.UnixEpoch;
     public bool Special = false;
     public uint Color = 0;
+    public uint Opacity = 0;
     public float Spacing = 0;
 
     public bool IsFirst = false;

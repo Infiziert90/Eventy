@@ -16,7 +16,7 @@ public class MainWindow : Window, IDisposable
     private DateTime CurrentDate = new(DateTime.Now.Year, DateTime.Now.Month, 1);
 
     private readonly uint DarkGrey;
-    public readonly Queue<uint> Colors;
+    public readonly Queue<(uint Normal, uint Opacity)> Colors;
 
     public MainWindow(Plugin plugin) : base("Eventy##Eventy")
     {
@@ -24,12 +24,16 @@ public class MainWindow : Window, IDisposable
 
         Flags = ImGuiWindowFlags.AlwaysAutoResize;
 
-        Colors = new Queue<uint>(
+        Colors = new Queue<(uint Normal, uint Opacity)>(
         [
-            Helper.Vec4ToUintColor(ImGuiColors.ParsedGreen), Helper.Vec4ToUintColor(ImGuiColors.ParsedBlue),
-            Helper.Vec4ToUintColor(ImGuiColors.ParsedPurple), Helper.Vec4ToUintColor(ImGuiColors.ParsedOrange),
-            Helper.Vec4ToUintColor(ImGuiColors.ParsedPink), Helper.Vec4ToUintColor(ImGuiColors.ParsedGold),
-            Helper.Vec4ToUintColor(ImGuiColors.DPSRed), Helper.Vec4ToUintColor(ImGuiColors.DalamudYellow)
+            (Helper.Vec4ToUintColor(ImGuiColors.ParsedGreen), Helper.Vec4ToUintColor(ImGuiColors.ParsedGreen with {W = 0.5f})),
+            (Helper.Vec4ToUintColor(ImGuiColors.ParsedBlue), Helper.Vec4ToUintColor(ImGuiColors.ParsedBlue with {W = 0.5f})),
+            (Helper.Vec4ToUintColor(ImGuiColors.ParsedPurple), Helper.Vec4ToUintColor(ImGuiColors.ParsedPurple with {W = 0.5f})),
+            (Helper.Vec4ToUintColor(ImGuiColors.ParsedOrange), Helper.Vec4ToUintColor(ImGuiColors.ParsedOrange with {W = 0.5f})),
+            (Helper.Vec4ToUintColor(ImGuiColors.ParsedPink), Helper.Vec4ToUintColor(ImGuiColors.ParsedPink with {W = 0.5f})),
+            (Helper.Vec4ToUintColor(ImGuiColors.ParsedGold), Helper.Vec4ToUintColor(ImGuiColors.ParsedGold with {W = 0.5f})),
+            (Helper.Vec4ToUintColor(ImGuiColors.DPSRed), Helper.Vec4ToUintColor(ImGuiColors.DPSRed with {W = 0.5f})),
+            (Helper.Vec4ToUintColor(ImGuiColors.DalamudYellow), Helper.Vec4ToUintColor(ImGuiColors.DalamudYellow with {W = 0.5f})),
         ]);
 
         DarkGrey = Helper.Vec4ToUintColor(ImGuiColors.DalamudGrey3);
@@ -119,7 +123,7 @@ public class MainWindow : Window, IDisposable
             using (ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing, new Vector2(0,0)))
             using (ImRaii.Group())
             {
-                using var textColor = ImRaii.PushColor(ImGuiCol.Text, CalculateTextColor(), dw == 0);
+                using var textColor = ImRaii.PushColor(ImGuiCol.Text, CalculateTextColor(true), dw == 0);
 
                 ImGui.Text($"{(dw == 0 ? "" : " ")}{DayNames[dw]}");
                 if (dw == 0)
@@ -132,28 +136,29 @@ public class MainWindow : Window, IDisposable
                 for (var row = 0; row < 7; row++)
                 {
                     var cday = curDay + (7 * row);
-                    if (cday >= 0 && cday < maxDayOfCurMonth)
-                    {
-                        var day = new DateTime(CurrentDate.Year, CurrentDate.Month, cday + 1, 0, 0, 0);
-                        var eventDay = Plugin.Events.TryGetValue(day.Ticks, out var array);
+                    if (cday - dw > maxDayOfCurMonth)
+                        continue;
 
-                        var pos = ImGui.GetCursorScreenPos();
-                        CreateSquare(dw, row, drawlist, eventDay, array);
-
-                        // using var rowId = ImRaii.PushId(row * 10 + dw);
-                        var text = string.Format(cday < 9 ? " {0}" : "{0}", cday + 1);
-                        var textWidth = ImGui.CalcTextSize(text).X;
-                        var spacing = 5.0f * ImGuiHelpers.GlobalScale;
-
-                        pos = pos with { X = pos.X + spacing + ((sampleWidth - textWidth) * 0.5f) };
-                        var color = Helper.Vec4ToUintColor(dw != 0 ? ImGuiColors.DalamudGrey : CalculateTextColor());
-                        drawlist.AddText(pos, color, string.Format(cday < 9 ? " {0}" : "{0}", cday + 1));
-                    }
+                    DateTime day;
+                    var lastMonth = cday < 0;
+                    var currentMonth = cday >= 0 && cday < maxDayOfCurMonth;
+                    if (currentMonth)
+                        day = new DateTime(CurrentDate.Year, CurrentDate.Month, cday + 1);
                     else
-                    {
-                        if (cday - dw < maxDayOfCurMonth)
-                            CreateSquare(dw, row, drawlist);
-                    }
+                        day = new DateTime(CurrentDate.Year, CurrentDate.Month, lastMonth ? 1 : maxDayOfCurMonth).AddDays(cday + 1 - (lastMonth ? 1 : maxDayOfCurMonth));
+
+                    var eventDay = Plugin.Events.TryGetValue(day.Ticks, out var array);
+
+                    var pos = ImGui.GetCursorScreenPos();
+                    CreateSquare(dw, row, drawlist, eventDay, array, currentMonth);
+
+                    var text = string.Format(cday < 9 ? " {0}" : "{0}", day.Day);
+                    var textWidth = ImGui.CalcTextSize(text).X;
+                    var spacing = 5.0f * ImGuiHelpers.GlobalScale;
+
+                    pos = pos with { X = pos.X + spacing + ((sampleWidth - textWidth) * 0.5f) };
+                    var color = Helper.Vec4ToUintColor(dw != 0 ? ImGuiColors.DalamudGrey with {W = currentMonth ? 1 : 0.5f} : CalculateTextColor(currentMonth));
+                    drawlist.AddText(pos, color, text);
                 }
 
                 if (dw == 0)
@@ -165,14 +170,14 @@ public class MainWindow : Window, IDisposable
         }
     }
 
-    private static Vector4 CalculateTextColor()
+    private static Vector4 CalculateTextColor(bool currentMonth)
     {
-        var textColor = ImGuiColors.DalamudGrey;
+        var textColor = ImGuiColors.DalamudGrey with {W = currentMonth ? 1 : 0.5f};
         var l = (textColor.X + textColor.Y + textColor.Z) * 0.33334f;
         return new Vector4(l * 2.0f > 1 ? 1 : l * 2.0f, l * .5f, l * .5f, textColor.W);
     }
 
-    private bool CreateSquare(int row, int col, ImDrawListPtr drawList, bool isEvent = false, ParsedEvent[]? events = null)
+    private bool CreateSquare(int row, int col, ImDrawListPtr drawList, bool isEvent = false, ParsedEvent[]? events = null, bool currentMonth = true)
     {
         var min = ImGui.GetCursorScreenPos();
         var max = new Vector2(min.X + FieldSize.X, min.Y + FieldSize.Y);
@@ -189,9 +194,10 @@ public class MainWindow : Window, IDisposable
         if (events != null)
             specialDay = events.FirstOrDefault(ev => ev.Special);
 
-        DrawRect(min, max, 0, !string.IsNullOrEmpty(specialDay.Name) ? specialDay.Color : DarkGrey, drawList);
+        var isSpecial = !string.IsNullOrEmpty(specialDay.Name);
+        DrawRect(min, max, isSpecial ? specialDay.Opacity : 0, isSpecial ? specialDay.Color : DarkGrey, drawList);
 
-        if (!string.IsNullOrEmpty(specialDay.Name) && hovered)
+        if (isSpecial && hovered)
         {
             using var textColor = ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey);
             ImGui.SetTooltip(specialDay.Name);
@@ -205,7 +211,7 @@ public class MainWindow : Window, IDisposable
                 var lineMin = min with { Y = min.Y + spacing };
                 var lineMax = max with { Y = min.Y + spacing + (5.0f * ImGuiHelpers.GlobalScale) };
 
-                drawList.AddRectFilled(lineMin, lineMax, ev.Color);
+                drawList.AddRectFilled(lineMin, lineMax, currentMonth ? ev.Color : ev.Opacity);
                 if (ImGui.IsMouseHoveringRect(lineMin, lineMax))
                 {
                     using var textColor = ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey);
