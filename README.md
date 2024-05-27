@@ -11,3 +11,7 @@ Simple but useful calender
 
 ### Server Bar
 ![dtrEntry](Eventy/images/EventyServerBar.gif)
+
+
+### Icon Credit (Modified)
+<a href="https://www.flaticon.com/free-icons/calendar" title="calendar icons">Calendar icons created by DinosoftLabs - Flaticon</a>
