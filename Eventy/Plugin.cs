@@ -14,7 +14,7 @@ namespace Eventy;
 
 public class Plugin : IDalamudPlugin
 {
-    [PluginService] public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
+    [PluginService] public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
     [PluginService] public static ICommandManager Commands { get; private set; } = null!;
     [PluginService] public static IPluginLog Log { get; private set; } = null!;
     [PluginService] public static INotificationManager Notification { get; private set; } = null!;

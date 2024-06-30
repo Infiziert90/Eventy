@@ -8,7 +8,7 @@ namespace Eventy;
 public class ServerBar
 {
     private readonly Plugin Plugin;
-    private readonly DtrBarEntry? DtrEntry;
+    private readonly IDtrBarEntry? DtrEntry;
 
     private long LastRefresh = Environment.TickCount64;
 
@@ -35,7 +35,7 @@ public class ServerBar
 
         Plugin.Framework.Update -= UpdateDtrBar;
         DtrEntry.OnClick -= OnClick;
-        DtrEntry.Dispose();
+        DtrEntry.Remove();
     }
 
     public void UpdateDtrBar(IFramework framework)
