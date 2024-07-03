@@ -44,6 +44,7 @@ public class MainWindow : Window, IDisposable
     private Vector2 FieldSize = new(60, 60);
     public override void Draw()
     {
+        var drawlist = ImGui.GetWindowDrawList();
         FieldSize = new Vector2(60, 60) * ImGuiHelpers.GlobalScale;
         var sampleWidth = ImGui.CalcTextSize("00").X;
 
@@ -59,6 +60,7 @@ public class MainWindow : Window, IDisposable
         }
 
         var style = ImGui.GetStyle();
+        using var framePadding = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, Vector2.One);
 
         const string arrowLeft = "<";
         const string arrowRight = ">";
@@ -80,15 +82,15 @@ public class MainWindow : Window, IDisposable
             var pos = ImGui.GetCursorScreenPos();
             pos = pos with { X = pos.X + ((LongestMonthWidth - monthWidth) * 0.5f) };
 
-            ImGui.GetForegroundDrawList().AddText(pos, color, MonthNames[CurrentDate.Month - 1]);
+            drawlist.AddText(pos, color, MonthNames[CurrentDate.Month - 1]);
 
-            ImGui.SameLine(0, LongestMonthWidth + style.ItemSpacing.X * 2);
+            ImGui.SameLine(0, LongestMonthWidth + (style.ItemSpacing.X * 2));
 
             if (ImGui.SmallButton(arrowRight))
                 CurrentDate = CurrentDate.AddMonths(1);
         }
 
-        ImGui.SameLine(ImGui.GetWindowWidth() - yearPartWidth - style.WindowPadding.X - style.ItemSpacing.X * 4.0f);
+        ImGui.SameLine(ImGui.GetWindowWidth() - yearPartWidth - style.WindowPadding.X - (style.ItemSpacing.X * 4.0f));
 
         using (ImRaii.PushId(1235))
         {
@@ -116,7 +118,6 @@ public class MainWindow : Window, IDisposable
                 maxDayOfCurMonth = 29;
         }
 
-        var drawlist = ImGui.GetWindowDrawList();
         var dayOfWeek = (int)new DateTime(CurrentDate.Year, CurrentDate.Month, 1).DayOfWeek;
         for (var dw = 0; dw < 7; dw++)
         {
