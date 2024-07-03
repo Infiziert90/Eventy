@@ -41,7 +41,7 @@ public partial class ConfigWindow
             using (ImRaii.PushColor(ImGuiCol.Button, ImGuiColors.ParsedBlue))
             {
                 if (ImGui.Button("Discord Thread"))
-                    Dalamud.Utility.Util.OpenLink("https://discord.com/channels/581875019861328007/1170093883355582474");
+                    Dalamud.Utility.Util.OpenLink("https://discord.com/channels/581875019861328007/1258092745663316103");
             }
 
             ImGui.SameLine();
