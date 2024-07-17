@@ -38,6 +38,11 @@ public class ServerBar
         DtrEntry.Remove();
     }
 
+    public void Refresh()
+    {
+        LastRefresh = 0;
+    }
+
     public void UpdateDtrBar(IFramework framework)
     {
         if (!Plugin.Configuration.ShowDtrEntry)
@@ -47,7 +52,7 @@ public class ServerBar
         }
 
         // Only refresh every 5s
-        if (Environment.TickCount64 + 5000 < LastRefresh)
+        if (Environment.TickCount64 - 5000 < LastRefresh)
             return;
         LastRefresh = Environment.TickCount64;
 
@@ -79,7 +84,11 @@ public class ServerBar
         DtrEntry!.Text = text;
     }
 
-    private void UpdateVisibility(bool shown) => DtrEntry!.Shown = shown;
+    private void UpdateVisibility(bool shown)
+    {
+        if (DtrEntry!.Shown != shown)
+            DtrEntry!.Shown = shown;
+    }
 
     private void OnClick()
     {
