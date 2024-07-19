@@ -4,8 +4,12 @@ namespace Eventy.Windows.Config;
 
 public partial class ConfigWindow : Window, IDisposable
 {
-    public ConfigWindow() : base("Configuration##Eventy")
+    private readonly Plugin Plugin;
+
+    public ConfigWindow(Plugin plugin) : base("Configuration##Eventy")
     {
+        Plugin = plugin;
+
         this.SizeConstraints = new WindowSizeConstraints
         {
             MinimumSize = new Vector2(300, 200),

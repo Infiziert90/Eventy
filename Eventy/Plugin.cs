@@ -28,7 +28,7 @@ public class Plugin : IDalamudPlugin
     public MainWindow MainWindow { get; init; }
 
     private readonly PluginCommandManager<Plugin> CommandManager;
-    private readonly ServerBar ServerBar;
+    public readonly ServerBar ServerBar;
 
     public FrozenDictionary<long, ParsedEvent[]> Events = FrozenDictionary<long, ParsedEvent[]>.Empty;
 
@@ -37,7 +37,7 @@ public class Plugin : IDalamudPlugin
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
         MainWindow = new MainWindow(this);
-        ConfigWindow = new ConfigWindow();
+        ConfigWindow = new ConfigWindow(this);
 
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(ConfigWindow);

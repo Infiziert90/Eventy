@@ -12,7 +12,10 @@ public partial class ConfigWindow
             changed |= ImGui.Checkbox("Use Short Version", ref Plugin.Configuration.UseShortVersion);
 
             if (changed)
+            {
                 Plugin.Configuration.Save();
+                Plugin.ServerBar.Refresh();
+            }
 
             ImGui.EndTabItem();
         }
