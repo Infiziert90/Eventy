@@ -10,6 +10,7 @@ public partial class ConfigWindow
 
             changed |= ImGui.Checkbox("Show Server Bar", ref Plugin.Configuration.ShowDtrEntry);
             changed |= ImGui.Checkbox("Use Short Version", ref Plugin.Configuration.UseShortVersion);
+            changed |= ImGui.Checkbox("Hide For Zero Events", ref Plugin.Configuration.HideForZeroEvents);
 
             if (changed)
             {
