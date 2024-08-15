@@ -201,7 +201,7 @@ public class MainWindow : Window, IDisposable
         if (isSpecial && hovered)
         {
             using var textColor = ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey);
-            ImGui.SetTooltip(specialDay.Name);
+            ImGui.SetTooltip($"{specialDay.Name}\n{specialDay.Begin:f} - {specialDay.End:f}");
         }
 
         if (isEvent && events != null)
@@ -215,8 +215,13 @@ public class MainWindow : Window, IDisposable
                 drawList.AddRectFilled(lineMin, lineMax, currentMonth ? ev.Color : ev.Opacity);
                 if (ImGui.IsMouseHoveringRect(lineMin, lineMax))
                 {
+                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+
                     using var textColor = ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey);
                     ImGui.SetTooltip($"{ev.Name}\n{ev.Begin:f} - {ev.End:f}");
+
+                    if (ev.Url != "" && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+                        Utils.OpenUrl(ev.Url);
                 }
             }
         }

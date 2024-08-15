@@ -118,6 +118,7 @@ public class Plugin : IDalamudPlugin
                     Begin = ev.Begin,
                     End = ev.End,
                     Special = ev.Special,
+                    Url = ev.Url,
                     Color = color.Normal,
                     Opacity = color.Opacity,
                     Spacing = 20.0f // initial spacing
@@ -181,6 +182,9 @@ public class Event
     [JsonProperty("special")]
     public bool Special;
 
+    [JsonProperty("url")]
+    public string Url = "";
+
     [JsonConstructor]
     public Event() {}
 }
@@ -191,6 +195,7 @@ public struct ParsedEvent
     public DateTime Begin = DateTime.UnixEpoch;
     public DateTime End = DateTime.UnixEpoch;
     public bool Special = false;
+    public string Url = "";
     public uint Color = 0;
     public uint Opacity = 0;
     public float Spacing = 0;

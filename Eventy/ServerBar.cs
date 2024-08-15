@@ -81,7 +81,7 @@ public class ServerBar
             foreach (var ev in events)
             {
                 tooltip.AddText($"{ev.Name}\n");
-                tooltip.AddUiForeground($"{ev.Begin:D} - {ev.End:D}", 58);
+                tooltip.AddUiForeground(ev.Special ? $"{ev.Begin:f} - {ev.End:f}" : $"{ev.Begin:D} - {ev.End:D}", 58);
                 tooltip.AddText("\n");
             }
 
