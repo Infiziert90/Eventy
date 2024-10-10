@@ -10,6 +10,8 @@ public class Configuration : IPluginConfiguration
     public bool UseShortVersion = false;
     public bool HideForZeroEvents = false;
 
+    public Subdomain Subdomain = Subdomain.Eu;
+
     public void Save()
     {
         Plugin.PluginInterface.SavePluginConfig(this);

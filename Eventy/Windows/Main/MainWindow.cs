@@ -118,6 +118,7 @@ public class MainWindow : Window, IDisposable
                 maxDayOfCurMonth = 29;
         }
 
+        var currentDay = DateTime.Now;
         var dayOfWeek = (int)new DateTime(CurrentDate.Year, CurrentDate.Month, 1).DayOfWeek;
         for (var dw = 0; dw < 7; dw++)
         {
@@ -151,7 +152,8 @@ public class MainWindow : Window, IDisposable
                     var eventDay = Plugin.Events.TryGetValue(day.Ticks, out var array);
 
                     var pos = ImGui.GetCursorScreenPos();
-                    CreateSquare(dw, row, drawlist, eventDay, array, currentMonth);
+                    var isCurrentDay = day.Date == currentDay.Date;
+                    CreateSquare(dw, row, drawlist, eventDay, array, currentMonth, isCurrentDay);
 
                     var text = string.Format(cday < 9 ? " {0}" : "{0}", day.Day);
                     var textWidth = ImGui.CalcTextSize(text).X;
@@ -178,7 +180,7 @@ public class MainWindow : Window, IDisposable
         return new Vector4(l * 2.0f > 1 ? 1 : l * 2.0f, l * .5f, l * .5f, textColor.W);
     }
 
-    private bool CreateSquare(int row, int col, ImDrawListPtr drawList, bool isEvent = false, ParsedEvent[]? events = null, bool currentMonth = true)
+    private bool CreateSquare(int row, int col, ImDrawListPtr drawList, bool isEvent = false, ParsedEvent[]? events = null, bool currentMonth = true, bool currentDay = false)
     {
         var min = ImGui.GetCursorScreenPos();
         var max = new Vector2(min.X + FieldSize.X, min.Y + FieldSize.Y);
@@ -197,6 +199,12 @@ public class MainWindow : Window, IDisposable
 
         var isSpecial = !string.IsNullOrEmpty(specialDay.Name);
         DrawRect(min, max, isSpecial ? specialDay.Opacity : 0, isSpecial ? specialDay.Color : DarkGrey, drawList);
+        if (currentDay)
+        {
+            var thickness = 3.0f;
+            var halfThickness = new Vector2(thickness / 2);
+            drawList.AddRect(min + halfThickness, max - halfThickness, Helper.Vec4ToUintColor(ImGuiColors.ParsedOrange), 0.0f, 0, thickness);
+        }
 
         if (isSpecial && hovered)
         {
@@ -221,7 +229,7 @@ public class MainWindow : Window, IDisposable
                     ImGui.SetTooltip($"{ev.Name}\n{ev.Begin:f} - {ev.End:f}");
 
                     if (ev.Url != "" && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
-                        Utils.OpenUrl(ev.Url);
+                        Utils.OpenUrl(ev.Url.Replace("//eu", $"//{Plugin.Configuration.Subdomain.ToValue()}"));
                 }
             }
         }
