@@ -14,7 +14,8 @@ public partial class ConfigWindow
 
         changed |= ImGui.Checkbox("Show Server Bar", ref Plugin.Configuration.ShowDtrEntry);
         changed |= ImGui.Checkbox("Use Short Version", ref Plugin.Configuration.UseShortVersion);
-        changed |= ImGui.Checkbox("Hide For Zero Events", ref Plugin.Configuration.HideForZeroEvents);
+        changed |= ImGui.Checkbox("Hide If No Events", ref Plugin.Configuration.HideForZeroEvents);
+        changed |= ImGui.Checkbox("Show PvP Seasons", ref Plugin.Configuration.ShowPvP);
 
         ImGuiHelpers.ScaledDummy(20.0f);
 

@@ -90,7 +90,7 @@ public class MainWindow : Window, IDisposable
                 CurrentDate = CurrentDate.AddMonths(1);
         }
 
-        ImGui.SameLine(ImGui.GetWindowWidth() - yearPartWidth - style.WindowPadding.X - (style.ItemSpacing.X * 4.0f));
+        ImGui.SameLine(ImGui.GetWindowWidth() - yearPartWidth - style.WindowPadding.X - (style.ItemSpacing.X * 3.0f));
 
         using (ImRaii.PushId(1235))
         {
@@ -141,13 +141,11 @@ public class MainWindow : Window, IDisposable
                     if (cday - dw > maxDayOfCurMonth)
                         continue;
 
-                    DateTime day;
                     var lastMonth = cday < 0;
                     var currentMonth = cday >= 0 && cday < maxDayOfCurMonth;
-                    if (currentMonth)
-                        day = new DateTime(CurrentDate.Year, CurrentDate.Month, cday + 1);
-                    else
-                        day = new DateTime(CurrentDate.Year, CurrentDate.Month, lastMonth ? 1 : maxDayOfCurMonth).AddDays(cday + 1 - (lastMonth ? 1 : maxDayOfCurMonth));
+                    var day = currentMonth
+                                  ? new DateTime(CurrentDate.Year, CurrentDate.Month, cday + 1)
+                                  : new DateTime(CurrentDate.Year, CurrentDate.Month, lastMonth ? 1 : maxDayOfCurMonth).AddDays(cday + 1 - (lastMonth ? 1 : maxDayOfCurMonth));
 
                     var eventDay = Plugin.Events.TryGetValue(day.Ticks, out var array);
 
@@ -214,7 +212,7 @@ public class MainWindow : Window, IDisposable
 
         if (isEvent && events != null)
         {
-            foreach (var ev in events.Where(ev => !ev.Special))
+            foreach (var ev in events.Where(ev => !ev.Special).Where(ev => !ev.IsPvP || Plugin.Configuration.ShowPvP))
             {
                 var spacing = ev.Spacing * ImGuiHelpers.GlobalScale;
                 var lineMin = min with { Y = min.Y + spacing };

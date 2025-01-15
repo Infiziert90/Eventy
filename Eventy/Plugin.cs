@@ -118,6 +118,7 @@ public class Plugin : IDalamudPlugin
                     Begin = ev.Begin,
                     End = ev.End,
                     Special = ev.Special,
+                    IsPvP = ev.IsPvP,
                     Url = ev.Url,
                     Color = color.Normal,
                     Opacity = color.Opacity,
@@ -185,6 +186,9 @@ public class Event
     [JsonProperty("url")]
     public string Url = "";
 
+    [JsonProperty("pvp")]
+    public bool IsPvP;
+
     [JsonConstructor]
     public Event() {}
 }
@@ -195,6 +199,7 @@ public struct ParsedEvent
     public DateTime Begin = DateTime.UnixEpoch;
     public DateTime End = DateTime.UnixEpoch;
     public bool Special = false;
+    public bool IsPvP = false;
     public string Url = "";
     public uint Color = 0;
     public uint Opacity = 0;
