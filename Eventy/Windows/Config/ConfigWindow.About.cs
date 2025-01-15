@@ -4,14 +4,16 @@ namespace Eventy.Windows.Config;
 
 public partial class ConfigWindow
 {
+    private const float SeparatorPadding = 1.0f;
+    private static float GetSeparatorPaddingHeight => SeparatorPadding * ImGuiHelpers.GlobalScale;
+
     private static void About()
     {
         using var tabItem = ImRaii.TabItem("About");
         if (!tabItem.Success)
             return;
 
-        var buttonHeight = ImGui.CalcTextSize("RRRR").Y + (20.0f * ImGuiHelpers.GlobalScale);
-
+        var buttonHeight = ImGui.GetFrameHeightWithSpacing() + ImGui.GetStyle().WindowPadding.Y + GetSeparatorPaddingHeight;
         using (var contentChild = ImRaii.Child("AboutContent", new Vector2(0, -buttonHeight)))
         {
             if (contentChild)

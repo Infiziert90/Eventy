@@ -10,7 +10,7 @@ public partial class ConfigWindow : Window, IDisposable
     {
         Plugin = plugin;
 
-        this.SizeConstraints = new WindowSizeConstraints
+        SizeConstraints = new WindowSizeConstraints
         {
             MinimumSize = new Vector2(300, 230),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
