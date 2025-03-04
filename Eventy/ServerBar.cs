@@ -58,7 +58,7 @@ public class ServerBar
 
         var date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
         var ok = Plugin.Events.TryGetValue(date.Ticks, out var events);
-        events = events?.Where(ev => !ev.IsPvP || Plugin.Configuration.ShowPvP).ToArray();
+        events = events?.Where(ev => !Plugin.Configuration.CompletedEvents.Contains(ev.Id) || Plugin.Configuration.ShowCompletedEvents).Where(ev => !ev.IsPvP || Plugin.Configuration.ShowPvP).ToArray();
 
         if (Plugin.Configuration.HideForZeroEvents && (!ok || events?.Length == 0))
         {

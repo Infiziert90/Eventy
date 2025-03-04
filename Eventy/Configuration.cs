@@ -13,6 +13,9 @@ public class Configuration : IPluginConfiguration
 
     public Subdomain Subdomain = Subdomain.Eu;
 
+    public bool ShowCompletedEvents = false;
+    public HashSet<long> CompletedEvents = [];
+
     public void Save()
     {
         Plugin.PluginInterface.SavePluginConfig(this);

@@ -114,6 +114,8 @@ public class Plugin : IDalamudPlugin
 
                 var eventDay = new ParsedEvent
                 {
+                    Id = ev.Id,
+                    
                     Name = ev.Name,
                     Begin = ev.Begin,
                     End = ev.End,
@@ -122,6 +124,7 @@ public class Plugin : IDalamudPlugin
                     Url = ev.Url,
                     Color = color.Normal,
                     Opacity = color.Opacity,
+                    
                     Spacing = 20.0f // initial spacing
                 };
 
@@ -195,6 +198,8 @@ public class Event
 
 public struct ParsedEvent
 {
+    public long Id;
+    
     public string Name = "";
     public DateTime Begin = DateTime.UnixEpoch;
     public DateTime End = DateTime.UnixEpoch;

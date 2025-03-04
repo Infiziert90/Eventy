@@ -5,6 +5,38 @@ namespace Eventy.Windows;
 
 public static class Helper
 {
+    /// <summary>
+    /// An unformatted version for ImGui.TextColored
+    /// </summary>
+    /// <param name="color">color to be used</param>
+    /// <param name="text">text to display</param>
+    public static void TextColored(Vector4 color, string text)
+    {
+        using (ImRaii.PushColor(ImGuiCol.Text, color))
+            ImGui.TextUnformatted(text);
+    }
+    
+    /// <summary>
+    /// An unformatted version for ImGui.TextWrapped
+    /// </summary>
+    /// <param name="text">text to display</param>
+    public static void TextWrapped(string text)
+    {
+        using (ImRaii.TextWrapPos(0.0f))
+            ImGui.TextUnformatted(text);
+    }
+    
+    /// <summary>
+    /// An unformatted version for ImGui.TextWrapped with color
+    /// </summary>
+    /// <param name="color">color to be used</param>
+    /// <param name="text">text to display</param>
+    public static void WrappedTextWithColor(Vector4 color, string text)
+    {
+        using (ImRaii.PushColor(ImGuiCol.Text, color))
+            TextWrapped(text);
+    }
+    
     public static bool Button(string id, FontAwesomeIcon icon, bool disabled)
     {
         var clicked = false;
