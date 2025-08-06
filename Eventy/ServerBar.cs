@@ -1,3 +1,4 @@
+using Dalamud.Game.Addon.Events.EventDataTypes;
 using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
@@ -99,7 +100,7 @@ public class ServerBar
             DtrEntry!.Shown = shown;
     }
 
-    private void OnClick()
+    private void OnClick(AddonMouseEventData data)
     {
         Plugin.OpenMain();
     }
