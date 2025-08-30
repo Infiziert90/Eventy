@@ -1,3 +1,4 @@
+using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 
@@ -37,6 +38,12 @@ public class MainWindow : Window, IDisposable
         ]);
 
         DarkGrey = Helper.Vec4ToUintColor(ImGuiColors.DalamudGrey3);
+
+        TitleBarButtons.Add(new TitleBarButton
+        {
+            Icon = FontAwesomeIcon.Cog,
+            Click = _ => { Plugin.OpenConfig(); }
+        });
     }
 
     public void Dispose() { }

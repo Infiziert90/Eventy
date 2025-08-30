@@ -54,9 +54,16 @@ public class Plugin : IDalamudPlugin
 
     [Command("/eventy")]
     [HelpMessage("Opens the event calender")]
-    public void Settings(string command, string args)
+    public void OpenMainCommand(string _, string __)
     {
-        MainWindow.IsOpen ^= true;
+        MainWindow.Toggle();
+    }
+
+    [Command("/eventyconf")]
+    [HelpMessage("Opens the event calender")]
+    public void OpenSettingsCommand(string _, string __)
+    {
+        ConfigWindow.Toggle();
     }
 
     public void Dispose()
@@ -115,7 +122,7 @@ public class Plugin : IDalamudPlugin
                 var eventDay = new ParsedEvent
                 {
                     Id = ev.Id,
-                    
+
                     Name = ev.Name,
                     Begin = ev.Begin,
                     End = ev.End,
@@ -124,7 +131,7 @@ public class Plugin : IDalamudPlugin
                     Url = ev.Url,
                     Color = color.Normal,
                     Opacity = color.Opacity,
-                    
+
                     Spacing = 20.0f // initial spacing
                 };
 
@@ -165,8 +172,8 @@ public class Plugin : IDalamudPlugin
     }
 
     private void DrawUi() => WindowSystem.Draw();
-    public void OpenMain() => MainWindow.IsOpen = true;
-    public void OpenConfig() => ConfigWindow.IsOpen = true;
+    public void OpenMain() => MainWindow.Toggle();
+    public void OpenConfig() => ConfigWindow.Toggle();
 }
 
 public class Event
@@ -199,7 +206,7 @@ public class Event
 public struct ParsedEvent
 {
     public long Id;
-    
+
     public string Name = "";
     public DateTime Begin = DateTime.UnixEpoch;
     public DateTime End = DateTime.UnixEpoch;
