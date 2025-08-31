@@ -233,15 +233,16 @@ public class MainWindow : Window, IDisposable
                 var lineMax = max with { Y = min.Y + spacing + (5.0f * ImGuiHelpers.GlobalScale) };
 
                 drawList.AddRectFilled(lineMin, lineMax, currentMonth ? ev.Color : ev.Opacity);
-                if (ImGui.IsMouseHoveringRect(lineMin, lineMax))
-                {
-                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
 
+                ImGui.SetCursorScreenPos(lineMin);
+                if (ImGui.InvisibleButton($"##event{ev.Id}", lineMax - lineMin) && ev.Url != "")
+                    Utils.OpenUrl(ev.Url.Replace("//eu", $"//{Plugin.Configuration.Subdomain.ToValue()}"));
+
+                if (ImGui.IsItemHovered())
+                {
                     using var textColor = ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey);
                     ImGui.SetTooltip($"{ev.Name}\n{ev.Begin:f} - {ev.End:f}");
-
-                    if (ev.Url != "" && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
-                        Utils.OpenUrl(ev.Url.Replace("//eu", $"//{Plugin.Configuration.Subdomain.ToValue()}"));
+                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                 }
             }
         }
