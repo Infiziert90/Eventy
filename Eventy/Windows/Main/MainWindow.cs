@@ -97,6 +97,13 @@ public class MainWindow : Window, IDisposable
                 CurrentDate = CurrentDate.AddMonths(1);
         }
 
+        const string todayString = "Today";
+        var todayWidth = ImGui.CalcTextSize(todayString).X + ImGui.GetStyle().FramePadding.X * 2;
+        var centerOffset = (ImGui.GetWindowWidth() - todayWidth) * 0.5f;
+        ImGui.SameLine(centerOffset);
+        if (ImGui.SmallButton(todayString))
+            CurrentDate = new(DateTime.Now.Year, DateTime.Now.Month, 1);
+
         ImGui.SameLine(ImGui.GetWindowWidth() - yearPartWidth - style.WindowPadding.X - (style.ItemSpacing.X * 3.0f));
 
         using (ImRaii.PushId(1235))
